@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Leçon de Français: Pronomes</title>
+  <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CSS -->
+  <style>
+    /* Include simple CSS for rotate animation in flashcards */
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-preserve-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    /* Transition for flipping animation */
+    .transition-transform { transition: transform 0.7s; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React, ReactDOM and Babel for JSX -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+
+// Icons placeholders to replace lucide-react components with emoji or simple text for demo purposes
+const ChevronRight = () => <span style={{color: 'red', marginRight:'0.5rem'}}>▶</span>;
+const RotateCcw = () => <span style={{color: 'red', marginRight:'0.5rem'}}>⟲</span>;
+const Volume2 = () => <span style={{color: 'orange', marginRight:'0.5rem'}}>🔊</span>;
+const Lightbulb = () => <span style={{color: 'yellow', marginRight:'0.5rem'}}>💡</span>;
+const CheckCircle = () => <span style={{color: 'green', marginRight:'0.5rem'}}>✔️</span>;
+const XCircle = () => <span style={{color: 'red', marginRight:'0.5rem'}}>❌</span>;
+const BookOpen = () => <span style={{color: 'red', marginRight:'0.5rem'}}>📖</span>;
+
+// Place here the full jsx logic from your original React components, 
+// but make sure there are no import/export statements inside this block.
+
+// Due to length and complexity, this example shows a minimal structure:
+const BrazilianWalkthrough = ({ walkthroughs }) => (
+  <div className="mt-8 pt-4 border-t-2 border-dashed border-gray-300">
+    <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center">
+      <BookOpen /> Walkthrough para Brasileiros: Detalhes Essenciais
+    </h3>
+    <div className="grid md:grid-cols-2 gap-4">
+      {walkthroughs.map((w, index) => (
+        <div key={index} className={`p-4 rounded-xl shadow-inner ${w.color || 'bg-white text-gray-800'} border-l-4 border-red-400`}>
+          <p className="font-extrabold text-lg mb-1">{w.pronoun}</p>
+          <p className="text-sm font-medium mb-2">{w.pt_context}</p>
+          <p className="bg-red-50 p-2 rounded-lg text-sm italic font-mono border border-red-200">
+            Exemplo: <strong>{w.example}</strong>
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+import React, { useState } from 'react';
+import { ChevronRight, RotateCcw, Volume2, Lightbulb, CheckCircle, XCircle, BookOpen } from 'lucide-react';
+
+// Componente para o Walkthrough específico para Brasileiros
+const BrazilianWalkthrough = ({ walkthroughs }) => (
+    <div className="mt-8 pt-4 border-t-2 border-dashed border-gray-300">
+        <h3 className="text-xl font-bold text-red-600 mb-4 flex items-center">
+            <BookOpen className="w-5 h-5 mr-2" />
+            Walkthrough para Brasileiros: Detalhes Essenciais
+        </h3>
+        <div className="grid md:grid-cols-2 gap-4">
+            {walkthroughs.map((w, index) => (
+                <div key={index} className={`p-4 rounded-xl shadow-inner ${w.color || 'bg-white text-gray-800'} border-l-4 border-red-400`}>
+                    <p className="font-extrabold text-lg mb-1">{w.pronoun}</p>
+                    <p className="text-sm font-medium mb-2">{w.pt_context}</p>
+                    <p className="bg-red-50 p-2 rounded-lg text-sm italic font-mono border border-red-200">
+                        Exemplo: **{w.example}**
+                    </p>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
+// Dados da Lição: Pronomes em Francês
+const lessonData = [
+  // 1. Visão Geral dos Tipos de Pronomes
+  {
+    id: 'types',
+    title: "1. Visão Geral: Tipos de Pronomes em Francês",
+    description: "Os pronomes substituem um substantivo e assumem diversas funções (sujeito, objeto, posse, etc.) na frase. Esta tabela lista os principais tipos e seus exemplos.",
+    color: 'bg-indigo-100 border-indigo-600',
+    data: [
+      { fr: "Pessoais (Sujeito)", pt: "Substitui a pessoa", obs: "je, tu, il, elle, on, nous, vous, ils, elles (Eu, tu, ele...)", category: 'Principal' },
+      { fr: "Pessoais (Objeto Direto)", pt: "Recebe a ação (COD)", obs: "me, te, le, la, nous, vous, les (me, te, o, a...)", category: 'Principal' },
+      { fr: "Pessoais (Objeto Indireto)", pt: "Recebe a ação (COI)", obs: "me, te, lui, nous, vous, leur (me, te, lhe, nos, vos, lhes)", category: 'Principal' },
+      { fr: "Reflexivos", pt: "Ação retorna ao sujeito", obs: "me, te, se, nous, vous, se (me, te, se...)", category: 'Principal' },
+      { fr: "Preposicionais/Tônicos", pt: "Ênfase, após preposições", obs: "moi, toi, lui, elle, nous, vous, eux, elles (mim, ti, ele...)", category: 'Principal' },
+      { fr: "Possessivos (Pronomes)", pt: "Substitui o substantivo + posse", obs: "le mien, la tienne, les leurs (o meu, a tua, os deles)", category: 'Principal' },
+    ],
+    headers: ['Tipo de Pronome', 'Função', 'Exemplos Chave (Francês)'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "O Dilema do Pronome (PT vs FR)",
+            pt_context: "Em francês, você usa muito mais pronomes que em português. Não há omissão do sujeito ('Eu amo' é sempre *J'aime*). Além disso, a maioria dos pronomes de objeto e adverbiais vêm **antes** do verbo, nunca depois (exceto no imperativo).",
+            example: "Je vous appelle. (Eu ligo para vocês.)",
+            color: 'bg-indigo-50 text-indigo-800'
+        },
+    ]
+  },
+  // 2. Pronomes Pessoais de Sujeito (AGORA COMPLETA)
+  {
+    id: 'sujet',
+    title: "2. Pronomes Pessoais de Sujeito (Qui fait l'action?)",
+    description: "Estes são os pronomes mais básicos, indicando quem realiza a ação. A principal dificuldade para brasileiros é a diferença entre Tu, Vous e On.",
+    color: 'bg-blue-100 border-blue-600',
+    data: [
+      { fr: "Je / J'", pt: "Eu", obs: "1ª P. Singular. Contração obrigatória antes de vogal/h mudo (J'aime).", category: 'Sujeto' },
+      { fr: "Tu", pt: "Tu / Você", obs: "2ª P. Singular. Sempre informal (amigos, família).", category: 'Sujeto' },
+      { fr: "Il", pt: "Ele", obs: "3ª P. Singular. Masculino.", category: 'Sujeto' },
+      { fr: "Elle", pt: "Ela", obs: "3ª P. Singular. Feminino.", category: 'Sujeto' },
+      { fr: "On", pt: "Nós / A gente", obs: "3ª P. Singular. Uso predominante no francês falado para 'Nós'.", category: 'Sujeto' },
+      { fr: "Nous", pt: "Nós", obs: "1ª P. Plural. Uso formal ou na escrita (raro no oral).", category: 'Sujeto' },
+      { fr: "Vous", pt: "Você (Formal) / Vocês", obs: "2ª P. Plural E 2ª P. Singular formal ('O(a) Sr(a)').", category: 'Sujeto' },
+      { fr: "Ils", pt: "Eles", obs: "3ª P. Plural. Masculino ou grupo misto (H+M).", category: 'Sujeto' },
+      { fr: "Elles", pt: "Elas", obs: "3ª P. Plural. Exclusivamente feminino.", category: 'Sujeto' },
+    ],
+    headers: ['Pronome Francês', 'Equivalente em PT', 'Diferença Chave (PT/FR)'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "On (O Falso Singular)",
+            pt_context: "É o pronome mais importante para o francês falado. Ele significa **Nós** ou **A gente**, mas o verbo é conjugado na 3ª pessoa do singular. Lembre-se: 'On va' (Nós vamos).",
+            example: "On **mange** une pizza. (Nós/A gente come uma pizza.)",
+            color: 'bg-yellow-50 text-yellow-800'
+        },
+        {
+            pronoun: "Tu vs. Vous",
+            pt_context: "Tu é reservado para intimidade. **Use Vous** com desconhecidos, superiores ou em qualquer situação que você usaria 'O Senhor(a)'/'Vocês' no Brasil. É o pronome de respeito (Tutear vs. Vosear).",
+            example: "Est-ce que vous **allez** bien, Madame? (A senhora está bem?)",
+            color: 'bg-green-50 text-green-800'
+        },
+        {
+            pronoun: "Ils vs. Elles",
+            pt_context: "Assim como no português, **Ils** é usado para grupos masculinos ou mistos (100 mulheres + 1 homem = *Ils*). **Elles** é estritamente para grupos femininos.",
+            example: "Les enfants **ils** jouent. (As crianças jogam.)",
+            color: 'bg-blue-50 text-blue-800'
+        },
+    ]
+  },
+  // 3. Pronomes Tônicos
+  {
+    id: 'toniques',
+    title: "3. Pronomes Tônicos (Ênfase e Posição Especial)",
+    description: "Usados para dar ênfase, após preposições (avec, pour, chez) ou em respostas curtas (Moi aussi).",
+    color: 'bg-indigo-200 border-indigo-700',
+    data: [
+      { fr: "Moi", pt: "Eu", obs: "Para ênfase (Moi, je...).", category: 'Tônico' },
+      { fr: "Toi", pt: "Tu / Você", obs: "Após preposição (avec toi).", category: 'Tônico' },
+      { fr: "Lui / Elle", pt: "Ele / Ela", obs: "Em comparações (plus grand que lui).", category: 'Tônico' },
+      { fr: "Nous / Vous", pt: "Nós / Vocês/O(a) Sr(a)", obs: "Invariáveis na forma (igual ao sujeito).", category: 'Tônico' },
+      { fr: "Eux / Elles", pt: "Eles / Elas", obs: "Em respostas curtas (Ce sont eux).", category: 'Tônico' },
+    ],
+    headers: ['Pronome Francês', 'Equivalente em PT', 'Exemplo de Uso'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "Moi, Toi (Ênfase)",
+            pt_context: "Sempre que o pronome estiver **isolado** ou for usado para **dar peso** à frase, use o tônico. Se você disser 'Eu, eu trabalho' para insistir, use o tônico seguido do pronome sujeito.",
+            example: "**Moi**, je préfère le thé. (Eu, eu prefiro chá.)",
+            color: 'bg-indigo-50 text-indigo-800'
+        },
+        {
+            pronoun: "Após Preposição (Lui, Elle, Eux, Elles)",
+            pt_context: "Qualquer pronome após uma preposição (*avec*, *pour*, *sans*, *chez*, etc.) deve ser tônico. Não confunda com o objeto indireto *lui* (sem preposição visível).",
+            example: "Je vais chez **lui**. (Eu vou à casa dele.)",
+            color: 'bg-indigo-50 text-indigo-800'
+        },
+    ],
+    examples: [
+        { pt: "Eu também quero um café.", fr: "**Moi** aussi, je veux un café.", usage: "Ênfase/Resposta Curta (Moi)" },
+        { pt: "Você vai com ele.", fr: "Tu vas avec **lui**.", usage: "Após Preposição (Lui)" },
+        { pt: "São elas que organizaram a festa.", fr: "Ce sont **elles** qui ont organisé la fête.", usage: "Ênfase/C'est... que (Elles)" },
+        { pt: "Ele é mais velho do que eu.", fr: "Il est plus âgé que **moi**.", usage: "Em Comparação (Moi)" },
+        { pt: "Vocês estão prontos?", fr: "**Vous**, vous êtes prêts?", usage: "Reduplicação de Sujeito (Vous)" },
+    ]
+  },
+  // 4. Adjetivos Possessivos (Mon, Ma, Mes...)
+  {
+    id: 'possessifs_adj',
+    title: "4. Adjetivos Possessivos (Mon, Ma, Mes...)",
+    description: "Estes 'pronomes' (adjetivos) concordam em GÊNERO e NÚMERO com o objeto possuído, e não com o possuidor.",
+    color: 'bg-yellow-100 border-yellow-600',
+    data: [
+      { fr: "Mon / Ma / Mes", pt: "Meu/Minha/Meus/Minhas", obs: "Concorda com o objeto possuído.", category: '1ª P. Sing.' },
+      { fr: "Ton / Ta / Tes", pt: "Teu/Tua/Teus/Tuas", obs: "Concorda com o objeto possuído.", category: '2ª P. Sing.' },
+      { fr: "Son / Sa / Ses", pt: "Dele/Dela", obs: "Concorda com o objeto possuído.", category: '3ª P. Sing.' },
+      { fr: "Notre / Nos", pt: "Nosso/Nossa/Nossos/Nossas", obs: "Só varia no plural.", category: '1ª P. Plural' },
+      { fr: "Votre / Vos", pt: "Vosso/Vossa/Vossos/Vossas (De vocês/De o(a) Sr(a))", obs: "Só varia no plural.", category: '2ª P. Plural' },
+      { fr: "Leur / Leurs", pt: "Deles/Delas", obs: "Só varia no plural.", category: '3ª P. Plural' },
+    ],
+    headers: ['Adjetivo Francês', 'Equivalente em PT', 'Regra Chave'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "Mon para Feminino (Vogal)",
+            pt_context: "Se o substantivo feminino começar com vogal ou 'h' mudo, você **deve** usar o masculino (*Mon*, *Ton*, *Son*) para evitar o encontro de vogais. Nunca diga *Ma amie*, e sim **Mon amie**.",
+            example: "**Mon** école est grande. (Minha escola é grande.)",
+            color: 'bg-yellow-50 text-yellow-800'
+        },
+        {
+            pronoun: "Son/Sa (Confusão com Gênero)",
+            pt_context: "O pronome *Son/Sa* refere-se à posse de *Il* ou *Elle*, mas o gênero do *Son/Sa* é determinado pelo objeto. *Son livre* (o livro dele **ou** dela). O livro é masculino.",
+            example: "Marie aime **son** chien. (Marie ama o cachorro dela.)",
+            color: 'bg-yellow-50 text-yellow-800'
+        },
+    ]
+  },
+  // 5. Adjetivos Demonstrativos (Ce, Cet, Cette, Ces)
+  {
+    id: 'demonstratifs_adj',
+    title: "5. Adjetivos Demonstrativos (Ce, Cet, Cette, Ces)",
+    description: "Usados para apontar pessoas ou coisas (Este, Esse, Aquele, etc.). Concordam em gênero e número com o nome que acompanham.",
+    color: 'bg-orange-100 border-orange-600',
+    data: [
+      { fr: "Ce", pt: "Este / Esse", obs: "Masculino singular que começa por consoante.", category: 'Singular M' },
+      { fr: "Cet", pt: "Este / Esse", obs: "Masculino singular que começa por vogal/h mudo.", category: 'Singular M' },
+      { fr: "Cette", pt: "Esta / Essa", obs: "Feminino singular.", category: 'Singular F' },
+      { fr: "Ces", pt: "Estes / Essas", obs: "Plural (Masc e Fem).", category: 'Plural' },
+    ],
+    headers: ['Pronome Francês', 'Equivalente em PT', 'Regra Chave'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "Ce vs. Cet",
+            pt_context: "Assim como nos possessivos, a forma *Cet* é a contração do masculino singular para evitar vogais consecutivas. Você não diz *Ce homme*, mas sim **Cet homme**.",
+            example: "**Cet** appartement est grand. (Este apartamento é grande.)",
+            color: 'bg-orange-50 text-orange-800'
+        },
+        {
+            pronoun: "Distinção de Proximidade (-ci / -là)",
+            pt_context: "Para distinguir 'este' de 'aquele' (proximidade), adicione **-ci** (aqui) ou **-là** (lá) ao substantivo. O adjetivo demonstrativo (*Ce, Cette, Ces*) não muda.",
+            example: "**Ce** livre-ci (Este livro aqui) / **Cette** maison-là (Aquela casa lá).",
+            color: 'bg-orange-50 text-orange-800'
+        },
+    ]
+  },
+  // 6. Pronomes Objeto Direto (COD)
+  {
+    id: 'objets_directs',
+    title: "6. Pronomes Objeto Direto (COD - Quem/O quê?)",
+    description: "Substituem um substantivo (pessoa ou coisa) que é objeto direto de um verbo (responde à pergunta 'quem?' ou 'o quê?').",
+    color: 'bg-pink-100 border-pink-600',
+    data: [
+        { fr: "Me / Te / Nous / Vous", pt: "Me / Te / Nos / Vos", obs: "Usados para 1ª e 2ª pessoas (reflexivo ou objeto).", category: '1ª/2ª P.' },
+        { fr: "Le / La / L'", pt: "O / A", obs: "'L'' é usado antes de verbo com vogal/h mudo. Sempre antes do verbo.", category: '3ª Sing.' },
+        { fr: "Les", pt: "Os / As", obs: "3ª pessoa plural (Masc/Fem).", category: '3ª Plur.' },
+    ],
+    headers: ['Pronome Francês', 'Equivalente em PT', 'Regra Chave e Exemplo'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "Le / La / Les (Posição)",
+            pt_context: "Em português, o COD vem depois do verbo (Eu o vejo). Em francês, ele vem **antes** do verbo. Lembre-se que eles contraem com o verbo se este começar com vogal (L').",
+            example: "Je vois la femme. → Je **la** vois. (Eu a vejo.)",
+            color: 'bg-pink-50 text-pink-800'
+        },
+        {
+            pronoun: "Me, Te (Igual ao Reflexivo)",
+            pt_context: "Os pronomes *Me* e *Te* são os mesmos para objeto direto, indireto e reflexivo. A função só muda com a 3ª pessoa (*le/la* para direto e *lui* para indireto).",
+            example: "Il **me** regarde. (Ele me olha.)",
+            color: 'bg-pink-50 text-pink-800'
+        },
+    ]
+  },
+  
+  // 7. Pronomes Objeto Indireto (COI)
+  {
+    id: 'objets_indirects',
+    title: "7. Pronomes Objeto Indireto (COI - A quem?)",
+    description: "Substituem um substantivo (pessoa) que é objeto indireto, geralmente introduzido por 'à' (a quem?).",
+    color: 'bg-teal-100 border-teal-600',
+    data: [
+        { fr: "Me / Te / Nous / Vous", pt: "Me / Te / Nos / Vos", obs: "Usados para 1ª e 2ª pessoas. Mesmo que o COD.", category: '1ª/2ª P.' },
+        { fr: "Lui", pt: "Lhe / A ele/ela", obs: "3ª pessoa singular (Masculino e Feminino).", category: '3ª Sing.' },
+        { fr: "Leur", pt: "Lhes / A eles/elas", obs: "3ª pessoa plural (Masc/Fem). Ex: Je leur parle.", category: '3ª Plur.' },
+    ],
+    headers: ['Pronome Francês', 'Equivalente em PT', 'Regra Chave e Exemplo'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "Lui (Unissex)",
+            pt_context: "Ao contrário do português, onde 'lhe' é o equivalente, em francês **Lui** é usado tanto para *a ele* quanto para *a ela*. Você não precisa se preocupar com o gênero da pessoa, apenas com o número (singular).",
+            example: "Je téléphone à Marie. → Je **lui** téléphone. (Eu ligo para ela.)",
+            color: 'bg-teal-50 text-teal-800'
+        },
+        {
+            pronoun: "Leur (Plural COI)",
+            pt_context: "Leur significa 'a eles' ou 'a elas'. Também é invariável em gênero e é sempre colocado antes do verbo. Não confunda com o Adjetivo Possessivo plural (*leurs* - sem artigo).",
+            example: "Il parle aux étudiants. → Il **leur** parle. (Ele fala com eles.)",
+            color: 'bg-teal-50 text-teal-800'
+        },
+    ],
+    examples: [
+        { pt: "Ele me escreve.", fr: "Il **m'**écrit.", usage: "1ª Pessoa Singular (Contração: me → m')" },
+        { pt: "Eu te pergunto.", fr: "Je **te** demande.", usage: "2ª Pessoa Singular" },
+        { pt: "Você nos fala.", fr: "Vous **nous** parlez.", usage: "1ª Pessoa Plural" },
+        { pt: "Eu dou um livro a ela.", fr: "Je **lui** donne un livre.", usage: "3ª Pessoa Singular (Feminino - Lui é unissex)" },
+        { pt: "Ele responde aos alunos.", fr: "Il **leur** répond.", usage: "3ª Pessoa Plural" },
+    ]
+  },
+  
+  // 8. Pronomes Adverbiais Y e EN
+  {
+    id: 'y_en',
+    title: "8. Pronomes Adverbiais (Y & En)",
+    description: "Y e En substituem frases inteiras e são cruciais para a fluência. Eles funcionam de forma semelhante a advérbios/pronomes em português.",
+    color: 'bg-cyan-100 border-cyan-600',
+    data: [
+        { fr: "Y", pt: "Lá / Aí / A isso", obs: "Substitui um LUGAR (à, dans, sur) ou uma COISA introduzida por 'à'.", category: 'Lugar/Coisa (à)' },
+        { fr: "En", pt: "Disso / Dele(a) / Alguns", obs: "Substitui um objeto introduzido por 'de' (incluindo partitivos) ou um número/quantidade.", category: 'Coisa (de)/Quantidade' },
+    ],
+    headers: ['Pronome', 'Função Principal em PT', 'Regra Chave e Exemplo de Uso'],
+    brazilianWalkthroughs: [
+        {
+            pronoun: "Y (O 'Lá' de Lugar)",
+            pt_context: "Use **Y** para substituir qualquer lugar. Se você pode dizer 'Eu vou **lá**' ou 'Ele mora **lá**', em francês, você usa Y antes do verbo. É mais fácil que pensar na preposição *à*.",
+            example: "Tu vas à Paris? Oui, j'**y** vais. (Tu vais a Paris? Sim, eu vou lá.)",
+            color: 'bg-cyan-50 text-cyan-800'
+        },
+        {
+            pronoun: "En (O Partitivo/Quantidade)",
+            pt_context: "Se você tem uma quantidade ou usa um partitivo (*du, de la, des*), **En** substitui o objeto e mantém a quantidade. Em português, dizemos 'Eu tenho dois' (subentendendo 'deles'). Em francês, o **En** é obrigatório.",
+            example: "Tu as des frères? Oui, j'**en** ai deux. (Tu tens irmãos? Sim, eu tenho dois [deles].)",
+            color: 'bg-cyan-50 text-cyan-800'
+        },
+    ]
+  },
+  
+  // 9. Ordem dos Pronomes
+  {
+      id: 'double_pronouns',
+      title: "9. A Ordem dos Pronomes na Frase",
+      description: "Quando dois pronomes objeto (COD e COI) aparecem juntos, eles seguem uma ordem fixa ANTES do verbo, exceto no imperativo afirmativo.",
+      color: 'bg-gray-100 border-gray-400',
+      data: [
+          { fr: "Me, Te, Se, Nous, Vous", pt: "Grupo 1", obs: "Sempre vêm em primeiro lugar, exceto antes de Y e En.", category: 'Posição 1' },
+          { fr: "Le, La, Les", pt: "Grupo 2 (COD)", obs: "Vêm em segundo lugar (substitui o objeto direto).", category: 'Posição 2' },
+          { fr: "Lui, Leur", pt: "Grupo 3 (COI)", obs: "Vêm em terceiro lugar (usados após Le, La, Les).", category: 'Posição 3' },
+          { fr: "Y", pt: "Adverbial (Lugar)", obs: "Vem em quarto lugar.", category: 'Posição 4' },
+          { fr: "En", pt: "Adverbial (Quantidade)", obs: "Sempre o último.", category: 'Posição 5' },
+      ],
+      headers: ['Pronome', 'Nome do Grupo', 'Regra de Posicionamento e Exemplo'],
+      brazilianWalkthroughs: [
+          {
+              pronoun: "Ordem Absoluta",
+              pt_context: "Você nunca vai dizer *Je le lui donne* em português (Eu o dou a ele). A regra francesa é rígida: **Objeto Direto (COD) vem antes do Objeto Indireto (COI)**, *exceto* quando o COI for 'Me, Te, Nous, Vous'.",
+              example: "Tu me donnes le livre. → Tu **me le** donnes. (Tu mo dás.)",
+              color: 'bg-gray-50 text-gray-800'
+          },
+          {
+              pronoun: "Ordem Y e En",
+              pt_context: "Os pronomes adverbiais Y e En são 'pesos pesados' e tendem a ficar no final da sequência, com **En** sendo sempre o último de todos.",
+              example: "Il donne trois pommes au magasin. → Il **y en** donne trois. (Ele dá três [delas] lá.)",
+              color: 'bg-gray-50 text-gray-800'
+          },
+      ]
+  },
+
+  // 10. Explicações Profundas (Deep Dive - ESTA É A SEÇÃO DETALHADA QUE FOI MANTIDA)
+  {
+    id: 'deep_dive',
+    title: "10. Explicações Profundas: Contexto e Uso para Brasileiros",
+    description: "Um guia prático focado nas dificuldades mais comuns de falantes de português ao usar pronomes em francês, com foco em como e quando usar cada um.",
+    color: 'bg-red-100 border-red-600',
+    isExplanation: true, // Marker for custom rendering
+    explanationContent: [
+        {
+            heading: "A. Pronomes Sujeito: O Dilema On, Tu e Vous",
+            points: [
+                "**O Poder do 'On' (A Gente/Nós):** Para a comunicação diária falada, o 'On' é o pronome que substitui 'Nous' na maioria esmagadora das vezes. **Regra de Ouro:** *On* conjuga sempre na 3ª pessoa do singular (como *Il* ou *Elle*). Exemplo: *On va au marché* (Nós vamos ao mercado).",
+                "**Tu vs. Vous:** A regra da formalidade é rígida. **Tu** é estritamente para amigos, família e crianças. **Vous** é para o plural (Vocês) **e** para o tratamento formal de singular (O(a) Senhor(a), chefe, desconhecidos). Use *Vous* para qualquer pessoa que você chamaria de 'Senhor(a)' em português.",
+                "**Ils vs. Elles:** Lembre-se, **Ils** é a forma plural masculina E **mista** (englobando homens e mulheres). **Elles** é usado apenas quando o grupo é composto *apenas* por mulheres."
+            ]
+        },
+        {
+            heading: "B. O Erro Possessivo (Mon, Ma, Mes)",
+            points: [
+                "**Mon/Ton/Son para Substantivos Femininos:** Lembre-se, se um substantivo feminino começar com uma vogal ou 'h' mudo, você é **obrigado** a usar a forma masculina (*Mon* amie, *Ton* école) para evitar o encontro de vogais. Em português, isso não acontece, então é um erro comum.",
+                "**Son/Sa (Gênero do Objeto, Não do Possuidor):** 'Son' e 'Sa' significam 'dele' OU 'dela'. O gênero do pronome é determinado pelo objeto possuído. *C'est son livre* (É o livro dele/dela) – 'livre' é masculino, então usa-se *son*.",
+            ]
+        },
+        {
+            heading: "C. Objeto Direto (COD) e Indireto (COI): Posição",
+            points: [
+                "**Sempre Antes do Verbo:** Em francês, *le, la, les, lui, leur* são colocados imediatamente **antes** do verbo, exceto no imperativo afirmativo. Ex: *Je les vois* (Eu os vejo).",
+                "**Lui é Unissex:** O pronome COI *Lui* é usado para 'a ele' e 'a ela'. Isso simplifica muito, já que em português usamos 'lhe' (unissex) mas também 'para ele/ela'. Ex: *Je lui donne le cadeau.* (Eu dou o presente a ele/ela).",
+            ]
+        },
+        {
+            heading: "D. Pronomes Adverbiais: Y (Lugar/A isso) e En (Dele/Disso/Quantidade)",
+            points: [
+                "**Y (Lá/Aí):** Substitui um **lugar** (introduzido por *à, dans, sur, chez*) ou uma **coisa abstrata** introduzida por *à*. Se em português você substitui 'ao banco' por 'lá', use **Y**. Ex: *Tu penses à ton travail? Oui, j'y pense.* (Tu pensas no teu trabalho? Sim, eu penso nisso.)",
+                "**En (Dele/Disso/Alguns):** Substitui tudo que for introduzido pela preposição **de** (incluindo partitivos *du, de la, des*) ou indica **quantidade/número**. Ex: *Tu as des livres? Oui, j'en ai deux.* (Tu tens livros? Sim, eu tenho dois [deles]).",
+            ]
+        },
+    ]
+  },
+
+  // 11. Pronomes Possessivos (Le mien, la tienne)
+  {
+      id: 'pronoms_possessifs',
+      title: "11. Pronomes Possessivos (Le mien, La tienne, Les leurs)",
+      description: "Estes pronomes **substituem** o substantivo + adjetivo possessivo. Eles sempre incluem um artigo definido (le, la, les) e concordam com o objeto POSSUÍDO.",
+      color: 'bg-lime-100 border-lime-600',
+      data: [
+          { fr: "Le mien / La mienne", pt: "O meu / A minha", obs: "Para 'eu' (je). Ex: Mon livre est ici, et le tien?", category: '1ª Sing.' },
+          { fr: "Le tien / La tienne", pt: "O teu / A tua (Informal)", obs: "Para 'tu'.", category: '2ª Sing.' },
+          { fr: "Le sien / La sienne", pt: "O dele/dela / A dele/dela", obs: "Para 'ele/ela' (il/elle).", category: '3ª Sing.' },
+          { fr: "Le nôtre / La nôtre", pt: "O nosso / A nossa", obs: "Para 'nós' (nous).", category: '1ª Plur.' },
+          { fr: "Le vôtre / La vôtre", pt: "O de vocês / O seu (Formal)", obs: "Para 'vous'.", category: '2ª Plur.' },
+          { fr: "Le leur / La leur", pt: "O deles/delas / A deles/delas", obs: "Para 'eles/elas' (ils/elles).", category: '3ª Plur.' },
+      ],
+      headers: ['Pronome Francês', 'Equivalente em PT', 'Regra Chave'],
+      brazilianWalkthroughs: [
+        {
+            pronoun: "O Artigo é Crucial (Le/La/Les)",
+            pt_context: "Em português, dizemos 'O meu é melhor'. Em francês, o artigo definido (**Le, La, Les**) é inseparável do pronome possessivo. Lembre-se: 'O meu' é **Le mien**.",
+            example: "Ma voiture est rouge, et **la tienne** est bleue. (Meu carro é vermelho, e o teu/sua é azul.)",
+            color: 'bg-lime-50 text-lime-800'
+        },
+        {
+            pronoun: "A Concordância",
+            pt_context: "O pronome deve concordar em gênero e número com o **objeto possuído**, não com o possuidor. Se você substitui *la maison* (feminino), use **la** sienne, mesmo que o possuidor seja um homem (*il*).",
+            example: "Sa valise est perdue. La **leur** est arrivée. (A mala deles/delas chegou.)",
+            color: 'bg-lime-50 text-lime-800'
+        },
+    ]
+  },
+  
+  // 12. Pronomes Demonstrativos (Celui, Ceci, Cela)
+  {
+      id: 'pronoms_demonstratifs',
+      title: "12. Pronomes Demonstrativos (Celui, Celle, Ceci, Cela/Ça)",
+      description: "Estes pronomes substituem o substantivo, ajudando a diferenciar ou apontar coisas. São divididos em simples (o que / a que) e neutros (isto / isso).",
+      color: 'bg-indigo-200 border-indigo-700',
+      data: [
+          { fr: "Celui / Celle", pt: "Aquele / Aquela / O que / A que", obs: "Forma simples (necessita de complemento -ci/-là ou relativo).", category: 'Singular' },
+          { fr: "Ceux / Celles", pt: "Aqueles / Aquelas / Os que / As que", obs: "Plural de celui/celle.", category: 'Plural' },
+          { fr: "Ceci / Cela", pt: "Isto / Isso", obs: "Forma neutra. Cela é a mais comum na escrita.", category: 'Neutro' },
+          { fr: "Ça", pt: "Isso / Isto (Contração de Cela)", obs: "O demonstrativo neutro mais usado na fala diária.", category: 'Neutro (Comum)' },
+          { fr: "Ce", pt: "Isto/Aquilo (Antes de 'être')", obs: "Usado com o verbo *être* (C'est / Ce sont).", category: 'Neutro (Especial)' },
+      ],
+      headers: ['Pronome Francês', 'Equivalente em PT', 'Regra Chave e Uso'],
+      brazilianWalkthroughs: [
+        {
+            pronoun: "Celui-ci / Celui-là (Diferenciação)",
+            pt_context: "Para traduzir *este* (perto) e *aquele* (longe), você **deve** usar o sufixo **-ci** (aqui) ou **-là** (lá) após o pronome. *Celui-ci* (este) / *Celui-là* (aquele).",
+            example: "Je préfère **celui-là** (aquele) pas **celui-ci** (este).",
+            color: 'bg-indigo-50 text-indigo-800'
+        },
+        {
+            pronoun: "Ça (O Neutro Universal)",
+            pt_context: "Se você estiver falando sobre uma ideia, uma situação ou algo abstrato ('Isso é verdade', 'Tudo bem'), use **Ça**. É a forma casual e mais comum de *cela*.",
+            example: "**Ça** va très bien! (Isso está muito bem! / Tudo bem!)",
+            color: 'bg-indigo-50 text-indigo-800'
+        },
+    ]
+  },
+
+  // 13. Pronomes Relativos (Qui, Que, Dont, Où)
+  {
+      id: 'pronoms_relatifs',
+      title: "13. Pronomes Relativos (Qui, Que, Dont, Où)",
+      description: "Conectam duas orações e evitam a repetição do substantivo (antecedente). A diferença entre QUI e QUE é a mais crucial.",
+      color: 'bg-fuchsia-100 border-fuchsia-600',
+      data: [
+          { fr: "Qui", pt: "Quem / O qual / Que (Sujeito)", obs: "Substitui o SUJEITO (seguido por um VERBO conjugado).", category: 'Sujeito' },
+          { fr: "Que / Qu'", pt: "O que / A qual / Que (Objeto Direto)", obs: "Substitui o OBJETO DIRETO (seguido por um SUJEITO).", category: 'Objeto Direto' },
+          { fr: "Dont", pt: "Cujo / De que / Do qual", obs: "Substitui um objeto introduzido pela preposição 'de'.", category: 'Objeto (de)' },
+          { fr: "Où", pt: "Onde / No qual / Quando", obs: "Substitui um lugar ou um tempo.", category: 'Lugar / Tempo' },
+          { fr: "Lequel", pt: "O qual / A qual (e variações)", obs: "Usado após preposições diferentes de 'de' ou 'à'.", category: 'Outras Preposições' },
+      ],
+      headers: ['Pronome Francês', 'Função em PT', 'Regra Chave'],
+      brazilianWalkthroughs: [
+        {
+            pronoun: "A Regra de Ouro (Qui vs. Que)",
+            pt_context: "O que vem imediatamente depois do pronome define a escolha. Se vier um **VERBO**, use **QUI** (ele é o sujeito). Se vier um **SUJEITO** (Je, tu, il...), use **QUE** (ele é o objeto).",
+            example: "Le livre **qui** **est** sur la table. (O livro que está na mesa.)",
+            color: 'bg-fuchsia-50 text-fuchsia-800'
+        },
+        {
+            pronoun: "Dont (Cujo / 'De que')",
+            pt_context: "O que vem imediatamente depois do pronome define a escolha. Se vier um **VERBO**, use **QUI** (ele é o sujeito). Se vier um **SUJEITO** (Je, tu, il...), use **QUE** (ele é o objeto).",
+            example: "Le film **dont** j'ai **besoin** (de). (O filme de que eu preciso.)",
+            color: 'bg-fuchsia-50 text-fuchsia-800'
+        },
+    ]
+  },
+];
+
+// Flashcards atualizados
+const flashcardData = [
+    { front: "Eu (formal, para um chefe)", back: "Vous" },
+    { front: "Nós vamos ao cinema (No francês falado): On ___ au cinéma.", back: "va" },
+    { front: "Eu dou o livro a ele (COI)", back: "Je lui donne le livre" },
+    { front: "Eu vou para lá (o lugar)", back: "J'y vais" },
+    { front: "Eu tenho alguns (de caneta): J'___ ai trois stylos.", back: "en" },
+    { front: "O meu (feminino singular, Pronome Possessivo)", back: "La mienne" },
+    { front: "Aquele (masculino singular, Pronome Demonstrativo)", back: "Celui-là" },
+    { front: "O homem que (sujeito) fala: L'homme ___ parle.", back: "qui" },
+    { front: "Eles (somente mulheres)", back: "Elles" },
+    { front: "Eles (grupo misto)", back: "Ils" },
+];
+
+// Componente Tabela Dinâmica
+const Table = ({ data, headers }) => (
+  <div className="overflow-x-auto shadow-xl rounded-xl">
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-blue-800 text-white">
+        <tr>
+          {headers.map((header, index) => (
+            <th key={index} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+              {header}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-100">
+        {data.map((row, index) => (
+          <tr key={index} className={index % 2 === 0 ? 'bg-white hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'}>
+            <td className="px-4 py-3 whitespace-nowrap text-sm font-semibold text-blue-700">
+              {row.fr}
+            </td>
+            <td className="px-4 py-3 text-sm text-gray-700">
+              {row.pt}
+            </td>
+            <td className="px-4 py-3 text-sm font-medium text-gray-600">
+                <Lightbulb className="inline w-4 h-4 mr-1 text-yellow-500" />
+                {row.obs}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+// Componente para a lista de exemplos PT/FR
+const PronounExamples = ({ examples, title, color, bgColorClass }) => (
+    <div className="mt-6 p-4 bg-white rounded-xl shadow-lg border-l-4" style={{ borderColor: color }}>
+        <h4 className={`text-xl font-bold mb-3 flex items-center`} style={{ color: color }}>
+            <Volume2 className="w-5 h-5 mr-2" />
+            {title}
+        </h4>
+        <div className="space-y-3">
+            {examples.map((ex, index) => (
+                <div key={index} className={`flex flex-col md:flex-row md:items-center p-2 rounded-lg border ${bgColorClass}`} >
+                    <div className="md:w-1/3 text-sm font-semibold text-gray-800 mb-1 md:mb-0">
+                        ({ex.usage}):
+                    </div>
+                    <div className="md:w-2/3 md:ml-2">
+                        <span className="text-sm font-medium text-gray-700 italic">PT: {ex.pt}</span>
+                        <br className="md:hidden"/>
+                        <span className="text-base font-bold ml-0 md:ml-4 font-mono" style={{ color: color }}>FR: {ex.fr}</span>
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
+
+// Componente Seção da Lição (Adaptada para incluir Walkthrough e o novo bloco de exemplos)
+const LessonSection = ({ data }) => {
+    
+    // Custom render for the detailed explanation section (Section 10)
+    if (data.isExplanation) {
+        return (
+            <div id={data.id} className={`${data.color} p-6 rounded-2xl shadow-2xl border-l-8 transition duration-500 hover:shadow-3xl`}>
+                <h2 className="text-3xl font-extrabold text-gray-800 mb-3 flex items-center">
+                    <ChevronRight className="w-6 h-6 mr-2 text-red-500" />
+                    {data.title}
+                </h2>
+                <p className="text-gray-700 mb-6 font-medium border-b border-dashed border-gray-400 pb-4">
+                    {data.description}
+                </p>
+                <div className="space-y-6">
+                    {data.explanationContent.map((section, index) => (
+                        <div key={index} className="bg-white p-5 rounded-xl shadow-lg border-t-4 border-blue-500">
+                            <h3 className="text-xl font-bold text-blue-700 mb-3 border-b pb-2">
+                                {section.heading}
+                            </h3>
+                            <ul className="space-y-3 text-gray-700 text-base">
+                                {section.points.map((point, pIndex) => (
+                                    <li key={pIndex} className="flex items-start">
+                                        <ChevronRight className="w-5 h-5 mr-2 mt-1 flex-shrink-0 text-red-500" />
+                                        <span dangerouslySetInnerHTML={{ __html: point }}></span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    }
+    
+    // Default render for tables
+    
+    // Configuração de cores para os blocos de exemplos
+    const isToniques = data.id === 'toniques';
+    const exampleColor = isToniques ? 'rgb(79, 70, 229)' : 'rgb(20, 184, 166)'; // Indigo-600 para Tônicos, Teal-600 para COI
+    const exampleBgClass = isToniques ? 'bg-indigo-50 border-indigo-200' : 'bg-teal-50 border-teal-200'; // Fundo claro para contraste
+
+    return (
+        <div id={data.id} className={`${data.color} p-6 rounded-2xl shadow-2xl border-l-8 transition duration-500 hover:shadow-3xl`}>
+            <h2 className="text-3xl font-extrabold text-gray-800 mb-3 flex items-center">
+                <ChevronRight className="w-6 h-6 mr-2 text-red-500" />
+                {data.title}
+            </h2>
+            <p className="text-gray-700 mb-6 font-medium border-b border-dashed border-gray-400 pb-4">
+                {data.description}
+            </p>
+            <Table data={data.data} headers={data.headers} />
+            
+            {/* NOVO BLOCO DE EXEMPLOS PRÁTICOS (SOLICITADO PELO USUÁRIO) */}
+            {data.examples && (
+                <PronounExamples 
+                    examples={data.examples} 
+                    title={isToniques ? "Exemplos Práticos com Pronomes Tônicos" : "Exemplos Práticos com Pronomes Objeto Indireto (COI)"}
+                    color={exampleColor} 
+                    bgColorClass={exampleBgClass}
+                />
+            )}
+            
+            {/* Render Brazilian Walkthroughs */}
+            {data.brazilianWalkthroughs && <BrazilianWalkthrough walkthroughs={data.brazilianWalkthroughs} />}
+
+            {/* Existing special notes */}
+            {data.id === 'sujet' && (
+                <blockquote className="mt-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 italic rounded-lg">
+                    <p className="font-bold flex items-center">
+                        <Volume2 className="w-5 h-5 mr-2" />
+                        Pronúncia e Conjugação:
+                    </p>
+                    <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
+                        <li><strong className='font-bold'>Il/Ils</strong> e <strong className='font-bold'>Elle/Elles</strong> têm a mesma pronúncia base! A diferença só aparece na conjugação do verbo.</li>
+                        <li><strong className='font-bold'>On</strong> (A gente/Nós) <strong className='text-blue-800'>é sempre singular</strong>: *On va* (A gente/Nós vamos).</li>
+                    </ul>
+                </blockquote>
+            )}
+            
+            {data.id === 'double_pronouns' && (
+                <blockquote className="mt-6 p-4 bg-gray-50 border-l-4 border-gray-500 text-gray-700 italic rounded-lg">
+                    <p className="font-bold flex items-center text-gray-800">
+                        <Volume2 className="w-5 h-5 mr-2" />
+                        Regra Mnemónica (Ordem):
+                    </p>
+                    <p className="ml-2 mt-1 space-y-1 text-sm">
+                       A ordem é: <strong className='font-bold'>M</strong>e <strong className='font-bold'>T</strong>e <strong className='font-bold'>S</strong>e <strong className='font-bold'>N</strong>ous <strong className='font-bold'>V</strong>ous &rarr; <strong className='font-bold'>L</strong>e <strong className='font-bold'>L</strong>a <strong className='font-bold'>L</strong>es &rarr; <strong className='font-bold'>L</strong>ui <strong className='font-bold'>L</strong>eur &rarr; <strong className='font-bold'>Y</strong> &rarr; <strong className='font-bold'>E</strong>n.
+                    </p>
+                    <p className="ml-2 mt-2 font-bold text-red-700">
+                        Exemplo: *Je <strong className='text-blue-800'>le lui</strong> donne.* (Eu dou-o a ele/ela.)
+                    </p>
+                </blockquote>
+            )}
+
+            {data.id === 'pronoms_relatifs' && (
+                <blockquote className="mt-6 p-4 bg-fuchsia-50 border-l-4 border-fuchsia-500 text-fuchsia-700 italic rounded-lg">
+                    <p className="font-bold flex items-center text-fuchsia-800">
+                        <Volume2 className="w-5 h-5 mr-2" />
+                        Diferença Vital: QUI vs. QUE
+                    </p>
+                    <ul className="list-disc list-inside ml-2 mt-1 space-y-1 text-sm">
+                        <li>Se o próximo elemento for um **Verbo**, use **QUI** (funciona como sujeito).</li>
+                        <li>Se o próximo elemento for um **Sujeito** (Je, tu, il...), use **QUE** (funciona como objeto).</li>
+                    </ul>
+                </blockquote>
+            )}
+        </div>
+    );
+};
+
+// Componente Flashcard
+const Flashcard = ({ card, onNext }) => {
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    const handleFlip = () => {
+        setIsFlipped(!isFlipped);
+    };
+
+    const handleNext = () => {
+        setIsFlipped(false);
+        onNext();
+    }
+
+    return (
+        <div 
+            onClick={isFlipped ? handleNext : handleFlip}
+            className="w-full h-64 md:h-80 perspective-1000 cursor-pointer"
+        >
+            <div 
+                className={`relative w-full h-full transform-style-preserve-3d transition-transform duration-700 rounded-2xl shadow-2xl ${isFlipped ? 'rotate-y-180' : ''}`}
+            >
+                {/* Frente do Card (Pergunta) */}
+                <div className="absolute backface-hidden w-full h-full bg-yellow-400 text-gray-900 flex flex-col justify-center items-center p-6 rounded-2xl border-4 border-yellow-600">
+                    <p className="text-xl md:text-2xl font-semibold mb-4">
+                        Qual é o pronome em francês para...
+                    </p>
+                    <h3 className="text-3xl md:text-5xl font-extrabold text-blue-800 text-center">
+                        {card.front}
+                    </h3>
+                    <p className="mt-4 text-sm text-gray-700">Clique para ver a resposta!</p>
+                </div>
+
+                {/* Verso do Card (Resposta) */}
+                <div className="absolute backface-hidden w-full h-full bg-blue-600 text-white flex flex-col justify-center items-center p-6 rounded-2xl rotate-y-180 border-4 border-blue-800">
+                    <p className="text-xl md:text-2xl font-semibold mb-4 opacity-80">
+                        A Resposta é...
+                    </p>
+                    <h3 className="text-4xl md:text-6xl font-extrabold text-yellow-400 text-center">
+                        {card.back}
+                    </h3>
+                    <p className="mt-4 text-sm opacity-80">Clique para o próximo!</p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Componente Exercício (EXPANDIDO)
+const Exercices = () => {
+    // 15 Perguntas expandidas
+    const questions = [
+        // 1-5: Pronomes Sujeito / Tônico
+        { id: 1, text: "Eu falo francês (Usando a contração): J'___ français.", answer: "parle", hint: "Verbo 'parler' na 1ª pessoa." },
+        { id: 2, text: "Nós vamos ao cinema (No francês falado): ___ va au cinéma.", answer: "On", hint: "Lembre-se do pronome que conjuga no singular, mas significa 'Nós'." },
+        { id: 3, text: "A chave é para ___ (para dar ênfase a 'ela'): La clé est pour ___.", answer: "elle", hint: "Qual é o pronome tônico para 'ela'?" },
+        { id: 4, text: "Ele é mais inteligente do que ___ (eu).", answer: "moi", hint: "Pronome tônico usado após a comparação 'que'." },
+        { id: 5, text: "Eles (o grupo de crianças, misto) estão prontos? ___ sont prêts.", answer: "Ils", hint: "O pronome sujeito plural que engloba masculino e misto." },
+
+        // 6-10: COD / COI
+        { id: 6, text: "Tu os compras (as maçãs, plural): Tu ___ achètes.", answer: "les", hint: "Pronome Objeto Direto (COD) plural (antes do verbo)." },
+        { id: 7, text: "Eu dou o livro a ele: Je ___ donne le livre.", answer: "lui", hint: "Pronome Objeto Indireto (COI) singular (unissex)." },
+        { id: 8, text: "Eu falo com as alunas (plural): Je ___ parle.", answer: "leur", hint: "Pronome Objeto Indireto (COI) plural." },
+        { id: 9, text: "Você (formal) me vê: Vous ___ voyez.", answer: "me", hint: "O pronome objeto 'me' para 1ª pessoa singular." },
+        { id: 10, text: "Nós estamos esperando ___ (você, informal): Nous t'___.", answer: "attendons", hint: "Verbo 'attendre' na 1ª pessoa do plural. O pronome objeto 't'' já está contraído." },
+
+        // 11-15: Adverbiais / Possessivos / Relativos
+        { id: 11, text: "Eu volto de lá (do trabalho): Je ___ reviens.", answer: "en", hint: "Pronome que substitui 'de' + lugar/coisa." },
+        { id: 12, text: "Nós comemos alguns (de bolo): Nous ___ mangeons.", answer: "en", hint: "Pronome que indica 'quantidade/alguns'." },
+        { id: 13, text: "Eu penso nisso (o trabalho): J'___ pense.", answer: "y", hint: "Pronome que substitui 'à' + coisa." },
+        { id: 14, text: "O meu livro é novo, e o ___ (o teu, masc. sing.) é velho. (Pronome Possessivo)", answer: "tien", hint: "Pronome Possessivo simples, masculino singular." },
+        { id: 15, text: "A pessoa ___ me ligou é meu amigo (sujeito): La personne ___ m'a appelé est mon ami.", answer: "qui", hint: "O que vem depois é um verbo ('a appelé'), então precisa de um pronome sujeito." },
+    ];
+    
+    const [answers, setAnswers] = useState({});
+    const [results, setResults] = useState({});
+    const [showResults, setShowResults] = useState(false);
+
+    const handleInputChange = (id, value) => {
+        setAnswers(prev => ({ ...prev, [id]: value }));
+        // Remove feedback ao editar
+        setResults(prev => ({ ...prev, [id]: undefined }));
+    };
+
+    const checkAllAnswers = () => {
+        const newResults = {};
+        let allAnswered = true;
+        let correctCount = 0;
+
+        questions.forEach(q => {
+            const userAnswer = answers[q.id]?.toLowerCase().trim() || '';
+            const correctAnswer = q.answer.toLowerCase().trim();
+            
+            if (userAnswer === '') {
+                allAnswered = false;
+            }
+
+            const isCorrect = userAnswer === correctAnswer;
+            newResults[q.id] = isCorrect;
+            if (isCorrect) correctCount++;
+        });
+
+        if (!allAnswered) {
+             console.log("ERRO: Por favor, responda a todas as 15 perguntas antes de verificar.");
+             return;
+        }
+
+        setResults(newResults);
+        setShowResults(true);
+
+        const feedbackMessage = correctCount === questions.length 
+            ? "Félicitations! Você gabaritou os 15 exercícios!" 
+            : `Você acertou ${correctCount} de ${questions.length} questões. Revise as regras!`;
+        
+        console.log(feedbackMessage); 
+    };
+
+    const resetQuiz = () => {
+        setAnswers({});
+        setResults({});
+        setShowResults(false);
+        console.log("Quiz resetado. Tente novamente!");
+    }
+
+    const correctCount = Object.values(results).filter(r => r === true).length;
+    const totalQuestions = questions.length;
+    const percentage = (correctCount / totalQuestions) * 100;
+
+    return (
+        <div className="bg-purple-100 p-6 rounded-2xl shadow-2xl border-l-8 border-purple-600">
+            <h2 className="text-3xl font-extrabold text-purple-800 mb-4 flex items-center">
+                <CheckCircle className="w-6 h-6 mr-2" />
+                14. Teste seus Conhecimentos (15 Exercícios)
+            </h2>
+            <p className="text-gray-700 mb-8 font-medium">
+                Complete as lacunas com o pronome ou verbo que falta, focando nas regras de posição e concordância que você acabou de aprender.
+            </p>
+
+            <div className="space-y-6">
+                {questions.map(q => (
+                    <div key={q.id} className={`p-4 rounded-lg shadow-md border ${
+                        results[q.id] === true ? 'bg-green-50 border-green-300' : 
+                        results[q.id] === false ? 'bg-red-50 border-red-300' : 'bg-white border-gray-200'
+                    }`}>
+                        <p className="font-semibold text-lg text-gray-800 mb-2">
+                            {q.id}. {q.text.split('___')[0]}
+                        </p>
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="text"
+                                value={answers[q.id] || ''}
+                                onChange={(e) => handleInputChange(q.id, e.target.value)}
+                                placeholder="Sua resposta..."
+                                className={`p-2 border rounded focus:ring-2 focus:ring-blue-400 transition flex-grow ${
+                                    results[q.id] === true ? 'border-green-500' : 
+                                    results[q.id] === false ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                                disabled={showResults}
+                            />
+                            <span className="text-xl font-bold text-gray-800">
+                                {q.text.split('___')[1]}
+                            </span>
+                            
+                            {/* Feedback Icon */}
+                            {showResults && (
+                                results[q.id] === true 
+                                    ? <CheckCircle className="w-6 h-6 text-green-600" />
+                                    : <XCircle className="w-6 h-6 text-red-600" />
+                            )}
+                        </div>
+                        
+                        {/* Exibir a resposta correta se estiver incorreta */}
+                        {showResults && results[q.id] === false && (
+                            <p className="text-sm text-red-700 mt-2 font-bold">
+                                Resposta Correta: <span className='bg-red-200 p-1 rounded'>{q.answer}</span>
+                            </p>
+                        )}
+
+                        <p className="text-sm text-blue-500 mt-2 italic flex items-center">
+                            <Lightbulb className="w-4 h-4 mr-1" /> Dica: {q.hint}
+                        </p>
+                    </div>
+                ))}
+            </div>
+
+            <div className="mt-8 flex justify-center flex-col items-center space-y-4">
+                <button
+                    onClick={showResults ? resetQuiz : checkAllAnswers}
+                    className="bg-purple-600 text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-purple-700 transition duration-300 shadow-lg transform hover:scale-105"
+                >
+                    {showResults ? 'Refazer o Teste' : 'Verificar as 15 Respostas'}
+                </button>
+                
+                {showResults && (
+                    <div className='text-center p-4 bg-purple-50 rounded-lg border-2 border-purple-300 w-full max-w-sm'>
+                        <p className='text-xl font-bold text-purple-800'>
+                            Resultado Final: {correctCount} / {totalQuestions}
+                        </p>
+                        <p className='text-3xl font-extrabold text-red-600 mt-1'>
+                            {percentage.toFixed(0)}%
+                        </p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+
+// Componente Principal da Aplicação
+const App = () => {
+    const [currentCardIndex, setCurrentCardIndex] = useState(0);
+
+    const handleNextCard = () => {
+        setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardData.length);
+    };
+
+    return (
+        <div className="min-h-screen bg-gray-50 font-sans p-4 md:p-10">
+            {/* Header */}
+            <header className="text-center mb-12 py-6 bg-white rounded-3xl shadow-xl border-t-8 border-red-500">
+                <h1 className="text-5xl md:text-6xl font-black text-blue-800 mb-2 tracking-tight">
+                    <span className="text-red-500">🇫🇷</span> Leçon de Français: Pronomes
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-600 mt-3 font-light">
+                    Guia Passo a Passo e Prática Interativa para Brasileiros
+                </p>
+            </header>
+
+            <main className="max-w-6xl mx-auto space-y-12">
+                
+                {/* Seções de Gramática (1 a 13) */}
+                {lessonData.map(data => (
+                    <LessonSection key={data.id} data={data} />
+                ))}
+
+                {/* Seção Flashcards (14) */}
+                <div className="bg-red-100 p-8 rounded-2xl shadow-2xl border-l-8 border-red-500">
+                    <h2 className="text-3xl font-extrabold text-red-800 mb-6 flex items-center">
+                        <RotateCcw className="w-6 h-6 mr-2" />
+                        Pratique com Flashcards
+                    </h2>
+                    <p className="text-gray-700 mb-8 font-medium">
+                        Teste sua memória e velocidade! Pense no equivalente em francês, clique para virar e clique novamente para o próximo.
+                    </p>
+                    <Flashcard 
+                        card={flashcardData[currentCardIndex]} 
+                        onNext={handleNextCard} 
+                    />
+                    <div className='mt-4 text-center text-sm text-gray-600 font-semibold'>
+                        Card {currentCardIndex + 1} de {flashcardData.length}
+                    </div>
+                </div>
+
+                {/* Seção Exercícios (15) - Título ajustado para 14 no código */}
+                <Exercices />
+
+            </main>
+
+            {/* Footer */}
+            <footer className="text-center mt-12 py-6 text-gray-500 border-t border-gray-200">
+                Fait avec passion 🇫🇷 | 2025
+            </footer>
+        </div>
+    );
+};
+
+export default App;
+
+// Below is minimal example App mounting:
+const App = () => {
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans p-4 md:p-10">
+      <header className="text-center mb-12 py-6 bg-white rounded-3xl shadow-xl border-t-8 border-red-500">
+        <h1 className="text-5xl md:text-6xl font-black text-blue-800 mb-2 tracking-tight">
+          <span role="img" aria-label="France">🇫🇷</span> Leçon de Français: Pronomes
+        </h1>
+        <p className="text-xl md:text-2xl text-gray-600 mt-3 font-light">
+          Guia Passo a Passo e Prática Interativa para Brasileiros
+        </p>
+      </header>
+      <main className="max-w-6xl mx-auto space-y-12">
+        {/* Your content sections go here */}
+        <p>React app content - replace this with your full components and data</p>
+      </main>
+      <footer className="text-center mt-12 py-6 text-gray-500 border-t border-gray-200">
+        Fait avec passion 🇫🇷 | 2025
+      </footer>
+    </div>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+  </script>
+</body>
+</html>
